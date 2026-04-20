@@ -7,7 +7,7 @@
         public string? PhoneNumber { get; set; }
 
 
-        //Navigation properties
+        //Navigation properties:
         public ICollection<Interest>? Interests { get; set; } = [];
         public ICollection<Link>? Links { get; set; } = [];
     }
