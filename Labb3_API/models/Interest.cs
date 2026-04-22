@@ -8,7 +8,7 @@
 
 
         //Navigation properties:
-        public ICollection<Person>? Persons { get; set; } = [];
+        public ICollection<User>? Users { get; set; } = [];
         public ICollection<Link>? Links { get; set; } = [];
     }
 }

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Labb3_API.Migrations
 {
-    [DbContext(typeof(PersonInterestsDbContext))]
+    [DbContext(typeof(UserInterestsDbContext))]
     [Migration("20260421070659_init")]
     partial class init
     {
