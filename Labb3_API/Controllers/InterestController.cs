@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static Labb3_API.models.DTOs.InterestDTOs;
 
 namespace Labb3_API.Controllers
 {
@@ -16,19 +17,25 @@ namespace Labb3_API.Controllers
             _db = db;
         }
 
-        [HttpPost("AddInterest")]
-        public async Task<IActionResult> AddNewInterest(Interest interestToAdd)
+        [HttpPost("AddNewInterest")]
+        public async Task<IActionResult> AddNewInterest(CreateAddInterestRequest addInterestRequest)
         {
-            if(interestToAdd == null)
+            if(addInterestRequest == null)
             {
                 return BadRequest("Interest was not registered.");
             }
+            var interestToAdd = new Interest
+            {
+                Title = addInterestRequest.Title,
+                Description = addInterestRequest.Description
+            };
+
             _db.Interests.Add(interestToAdd);
             await _db.SaveChangesAsync();
             return Ok(interestToAdd);
         }
 
-        [HttpGet("GetInterests")]
+        [HttpGet("GetAllInterests")]
         public async Task<IEnumerable<Interest>> GetAllInterests()
         {
             var interests = await _db.Interests.ToListAsync();
