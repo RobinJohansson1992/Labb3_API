@@ -12,7 +12,7 @@ namespace Labb3_API
 
             // Add services to the container.
 
-            builder.Services.AddDbContext<PersonInterestsDbContext>(options =>
+            builder.Services.AddDbContext<UserInterestsDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
             builder.Services.AddControllers();
