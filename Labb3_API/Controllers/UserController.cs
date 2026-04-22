@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 namespace Labb3_API.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]                 
+    [ApiController]
     public class UserController : ControllerBase
     {
-            private readonly UserInterestsDbContext _db;
-        
+        private readonly UserInterestsDbContext _db;
+
         public UserController(UserInterestsDbContext db)
         {
             _db = db;
@@ -21,15 +21,15 @@ namespace Labb3_API.Controllers
             new User { Id = 1, Name = "Anna Svensson", PhoneNumber = "070-1234567" },
                 new User { Id = 2, Name = "Erik Johansson", PhoneNumber = "073-9876543" }
             ];
-        
-        [HttpGet(Name = "GetAllUsers")]
+
+        [HttpGet("GetUsers", Name = "GetAllUsers")]
         public async Task<IEnumerable<User>> GetAllUsers()
         {
             var users = await _db.Users.ToListAsync();
             return users;
         }
 
-        [HttpPost(Name = "AddUser")]
+        [HttpPost("AddUser", Name = "AddNewUser")]
         public async Task<IActionResult> AddUser(User userToAdd)
         {
             if (userToAdd == null)
