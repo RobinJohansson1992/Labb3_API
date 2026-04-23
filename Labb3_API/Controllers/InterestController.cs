@@ -20,7 +20,7 @@ namespace Labb3_API.Controllers
         [HttpPost("AddNewInterest")]
         public async Task<IActionResult> AddNewInterest(CreateAddInterestRequest addInterestRequest)
         {
-            if(addInterestRequest == null)
+            if (addInterestRequest == null)
             {
                 return BadRequest("Interest was not registered.");
             }
@@ -36,10 +36,32 @@ namespace Labb3_API.Controllers
         }
 
         [HttpGet("GetAllInterests")]
-        public async Task<IEnumerable<Interest>> GetAllInterests()
+        public async Task<IActionResult> GetAllInterests()
         {
-            var interests = await _db.Interests.ToListAsync();
-            return interests;
+            var interests = await _db.Interests
+                .Select(i => new
+                {
+                    i.Id,
+                    i.Title,
+                    i.Description
+                })
+                .ToListAsync();
+
+            return Ok(interests);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteInterest(int id)
+        {
+            var interest = await _db.Interests.FindAsync(id);
+            if (interest == null)
+            {
+                return NotFound("Interest was not found.");
+            }
+
+            _db.Interests.Remove(interest);
+            await _db.SaveChangesAsync();
+            return Ok("Interest deleted.");
         }
 
     }
