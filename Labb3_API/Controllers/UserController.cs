@@ -41,10 +41,82 @@ namespace Labb3_API.Controllers
         }
 
         [HttpGet("GetAllUsers")]
-        public async Task<IEnumerable<User>> GetAllUsers()
+        public async Task<IActionResult> GetAllUsers()
         {
-            var users = await _db.Users.ToListAsync();
-            return users;
+            var users = await _db.Users
+                .Select(u => new
+                {
+                    u.Id,
+                    u.Name,
+                    u.PhoneNumber
+                })
+                .ToListAsync();
+
+            return Ok(users);
+        }
+
+        [HttpGet("{userId}", Name = "GetInterestsByUserId")]
+        public async Task<IActionResult> GetInterestsByUserId(int userId)
+        {
+            var user = await _db.Users
+                .Where(u => u.Id == userId)
+                .Select(u => new
+                {
+                    u.Id,
+                    u.Name,
+                    Interests = u.Interests.Select(i => new
+                    {
+                        i.Id,
+                        i.Title,
+                        i.Description
+                    })
+                })
+                .FirstOrDefaultAsync();
+
+            if (user == null) return BadRequest("User not found.");
+
+            return Ok(user.Interests);
+        }
+
+        [HttpPost("{userId}/interests/{interestId}", Name = "AddInterestToUser")]
+        public async Task<IActionResult> AddInterestToUser(int userId, int interestId)
+        {
+            var user = await _db.Users
+                .Include(u => u.Interests)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            var interest = await _db.Interests
+                .FindAsync(interestId);
+            if (interest == null)
+            {
+                return NotFound("Interest not found.");
+            }
+            if (user.Interests.Any(i => i.Id == interestId))
+            {
+                return Conflict("User already has this interest.");
+            }
+
+            user.Interests.Add(interest);
+            await _db.SaveChangesAsync();
+            return Ok($"Intrest '{interest.Title}' added to user: {user.Name}");
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            var user = await _db.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound("User was not found.");
+            }
+
+            _db.Users.Remove(user);
+            await _db.SaveChangesAsync();
+            return Ok("User deleted.");
         }
     }
 }
