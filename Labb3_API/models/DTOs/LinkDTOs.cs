@@ -5,8 +5,14 @@
         public record CreateAddLinkRequest()
         {
             public string? Url { get; set; }
-            //public int UserId { get; set; }
-            //public int InterestId { get; set; }
+        }
+
+        public record LinkResponse
+        {
+            public int Id { get; set; }
+            public string? Url { get; set; }
+            public int UserId { get; set; }
+            public int InterestId { get; set; }
         }
     }
 }
