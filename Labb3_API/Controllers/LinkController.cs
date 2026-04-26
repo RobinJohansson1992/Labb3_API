@@ -1,5 +1,4 @@
 ﻿using Labb3_API.models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static Labb3_API.models.DTOs.LinkDTOs;
@@ -23,12 +22,12 @@ namespace Labb3_API.Controllers
             var user = await _db.Users.FindAsync(userId);
             if (user == null)
             {
-                return BadRequest("User was not found.");
+                return NotFound("User was not found.");
             }
             var interest = await _db.Interests.FindAsync(interestId);
             if(interest == null)
             {
-                return BadRequest("Interest was not found.");
+                return NotFound("Interest was not found.");
             }
 
             var linkToAdd = new Link
@@ -39,10 +38,19 @@ namespace Labb3_API.Controllers
             };
             _db.Links.Add(linkToAdd);
             await _db.SaveChangesAsync();
-            return Ok(linkToAdd);
+
+            return Ok(new LinkResponse
+            {
+                Id = linkToAdd.Id,
+                Url = linkToAdd.Url,
+                UserId = linkToAdd.UserId,
+                InterestId = linkToAdd.InterestId
+            });
         }
 
-        [HttpGet("{userId}", Name = "GetLinksByUserId")]
+
+        [HttpGet("{userId}")]
+        [EndpointSummary("Get links by user id")]
         public async Task<IActionResult> GetLinksByUserId(int userId)
         {
             var links = await _db.Links
@@ -51,16 +59,12 @@ namespace Labb3_API.Controllers
                 {
                     l.Id,
                     l.Url,
-                    User = new
-                    {
-                        l.User.Id,
-                        l.User.Name
-                    }
                 })
                 .ToListAsync();
 
             return Ok(links);
         }
+
 
         [HttpGet("GetAllLinks")]
         public async Task<IActionResult> GetAllLinks()
@@ -75,6 +79,7 @@ namespace Labb3_API.Controllers
 
             return Ok(links);
         }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLink(int id)

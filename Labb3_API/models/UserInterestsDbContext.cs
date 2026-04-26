@@ -8,7 +8,6 @@ namespace Labb3_API.models
         {
 
         }
-
         public DbSet<User> Users { get; set; }
         public DbSet<Interest> Interests { get; set; }
         public DbSet<Link> Links { get; set; }

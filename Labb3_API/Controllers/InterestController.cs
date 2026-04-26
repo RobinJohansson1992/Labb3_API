@@ -1,5 +1,4 @@
 ﻿using Labb3_API.models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static Labb3_API.models.DTOs.InterestDTOs;
@@ -35,6 +34,7 @@ namespace Labb3_API.Controllers
             return Ok(interestToAdd);
         }
 
+
         [HttpGet("GetAllInterests")]
         public async Task<IActionResult> GetAllInterests()
         {
@@ -49,6 +49,31 @@ namespace Labb3_API.Controllers
 
             return Ok(interests);
         }
+
+
+        [HttpGet("{userId}")]
+        [EndpointSummary("Get interests by user id")]
+        public async Task<IActionResult> GetInterestsByUserId(int userId)
+        {
+            var user = await _db.Users
+                .Where(u => u.Id == userId)
+                .Select(u => new
+                {
+                    u.Id,
+                    Interests = u.Interests!.Select(i => new
+                    {
+                        i.Id,
+                        i.Title,
+                        i.Description
+                    })
+                })
+                .FirstOrDefaultAsync();
+
+            if (user == null) return NotFound("User not found.");
+
+            return Ok(user.Interests);
+        }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteInterest(int id)
