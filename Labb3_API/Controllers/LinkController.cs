@@ -16,7 +16,9 @@ namespace Labb3_API.Controllers
             _db = db;
         }
 
-        [HttpPost("{userId}/{interestId}", Name = "AddNewLink")]
+        [HttpPost("{userId}/{interestId}")]
+        [EndpointSummary("Add new link")]
+
         public async Task<IActionResult> AddNewLink(int userId, int interestId, CreateAddLinkRequest addLinkRequest)
         {
             var user = await _db.Users.FindAsync(userId);
